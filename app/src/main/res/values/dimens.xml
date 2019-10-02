@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="minimum_list_item_height">48dp</dimen>
+    <dimen name="big_font">80sp</dimen>
+    <dimen name="standard_size">40sp</dimen>
 </resources>

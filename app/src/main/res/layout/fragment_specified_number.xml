@@ -3,12 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SpecifiedNumberFragment">
+    tools:context=".ui.number.SpecifiedNumberFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/specified_number"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:text="42"
+        android:textSize="@dimen/big_font"
+        android:textStyle="bold"
+        android:gravity="center"/>
 
 </FrameLayout>
