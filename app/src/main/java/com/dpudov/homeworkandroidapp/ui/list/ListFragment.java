@@ -5,14 +5,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dpudov.homeworkandroidapp.R;
+import com.dpudov.homeworkandroidapp.data.NumberModel;
 import com.dpudov.homeworkandroidapp.data.NumberService;
 import com.dpudov.homeworkandroidapp.ui.list.adapter.NumbersListAdapter;
+
+import java.util.List;
 
 
 public class ListFragment extends Fragment {
@@ -20,6 +24,7 @@ public class ListFragment extends Fragment {
     private NumbersListAdapter numbersListAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
+    private ImageView plusButton;
 
     public ListFragment() {
         // Required empty public constructor
@@ -36,6 +41,17 @@ public class ListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.numbers_list_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(numbersListAdapter);
+
+        plusButton = view.findViewById(R.id.add_number);
+        plusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<NumberModel> list = NumberService.getInstance().getData();
+                NumberModel prev = list.get(list.size() - 1);
+                NumberService.getInstance().addNumber(prev.getNumber() + 1);
+                numbersListAdapter.notifyDataSetChanged();
+            }
+        });
         return view;
     }
 

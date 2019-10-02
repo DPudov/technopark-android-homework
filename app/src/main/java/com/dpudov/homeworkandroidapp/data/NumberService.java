@@ -23,4 +23,8 @@ public class NumberService {
     public List<NumberModel> getData() {
         return mData;
     }
+
+    public void addNumber(int i) {
+        mData.add(new NumberModel(i));
+    }
 }

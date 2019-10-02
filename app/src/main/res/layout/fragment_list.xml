@@ -7,7 +7,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/numbers_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_weight="8.5" />
 
 
     <ImageView
@@ -15,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/minimum_list_item_height"
         android:layout_gravity="center_vertical"
+        android:layout_weight="1.5"
         android:contentDescription="@string/add_number"
         android:focusable="auto"
         android:src="@drawable/ic_add_circle_outline_black_48dp" />
