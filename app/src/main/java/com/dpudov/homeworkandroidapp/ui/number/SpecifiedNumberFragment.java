@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.dpudov.homeworkandroidapp.AppConstants;
@@ -22,11 +23,15 @@ public class SpecifiedNumberFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_specified_number, container, false);
+        return inflater.inflate(R.layout.fragment_specified_number, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mNumberTextView = view.findViewById(R.id.specified_number);
         Bundle args = getArguments();
         if (args != null) {
@@ -36,7 +41,5 @@ public class SpecifiedNumberFragment extends Fragment {
             mNumberTextView.setText(numberModel.toString());
             mNumberTextView.setTextColor(color);
         }
-
-        return view;
     }
 }
