@@ -1,6 +1,5 @@
 package com.dpudov.homeworkandroidapp.ui.list.adapter;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dpudov.homeworkandroidapp.R;
 import com.dpudov.homeworkandroidapp.data.NumberModel;
-import com.dpudov.homeworkandroidapp.ui.list.ListViewModel;
 
 import java.util.List;
 
 public class NumbersListAdapter extends RecyclerView.Adapter<NumbersViewHolder> {
-    private List<NumberModel> numbers;
-    private ListViewModel viewModel;
+    private List<NumberModel> mNumbers;
+    private OnItemClickListener<NumberModel> mClickListener;
 
-    public NumbersListAdapter(List<NumberModel> numbers) {
-        this.numbers = numbers;
+    public NumbersListAdapter(@NonNull List<NumberModel> numbers, OnItemClickListener<NumberModel> clickListener) {
+        this.mNumbers = numbers;
+        this.mClickListener = clickListener;
     }
 
     @NonNull
@@ -33,16 +32,15 @@ public class NumbersListAdapter extends RecyclerView.Adapter<NumbersViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull NumbersViewHolder holder, int position) {
-        holder.getNumberTextView().setText(numbers.get(position).toString());
-        if (position % 2 == 0) {
-            holder.getNumberTextView().setTextColor(Color.BLUE);
-        } else {
-            holder.getNumberTextView().setTextColor(Color.RED);
+        NumberModel current = mNumbers.get(position);
+        if (current != null) {
+            holder.getNumberTextView().setText(current.toString());
+            holder.bind(current, mClickListener);
         }
     }
 
     @Override
     public int getItemCount() {
-        return numbers.size();
+        return mNumbers.size();
     }
 }

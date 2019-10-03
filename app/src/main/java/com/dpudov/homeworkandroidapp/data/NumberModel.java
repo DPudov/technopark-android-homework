@@ -19,4 +19,8 @@ public class NumberModel {
     public String toString() {
         return String.valueOf(mNumber);
     }
+
+    public boolean isOdd() {
+        return mNumber % 2 == 1;
+    }
 }

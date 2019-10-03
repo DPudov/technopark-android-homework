@@ -1,6 +1,7 @@
 package com.dpudov.homeworkandroidapp.ui.list;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dpudov.homeworkandroidapp.AppConstants;
 import com.dpudov.homeworkandroidapp.R;
 import com.dpudov.homeworkandroidapp.data.NumberModel;
 import com.dpudov.homeworkandroidapp.data.NumberService;
 import com.dpudov.homeworkandroidapp.ui.list.adapter.NumbersListAdapter;
+import com.dpudov.homeworkandroidapp.ui.list.adapter.OnItemClickListener;
 
 import java.util.List;
 
@@ -32,10 +37,23 @@ public class ListFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
-        numbersListAdapter = new NumbersListAdapter(NumberService.getInstance().getData());
+        final View view = inflater.inflate(R.layout.fragment_list, container, false);
+        OnItemClickListener<NumberModel> clickListener = new OnItemClickListener<NumberModel>() {
+            @Override
+            public void onItemClick(NumberModel item) {
+                int number = item.getNumber();
+                NavController controller = Navigation.findNavController(view);
+                Bundle bundle = new Bundle();
+                bundle.putInt(AppConstants.SPECIFIED_NUMBER, number);
+                int color = item.isOdd() ? Color.BLUE : Color.RED;
+                bundle.putInt(AppConstants.SPECIFIED_NUMBER_COLOR, color);
+                controller.navigate(R.id.action_listFragment_to_specifiedNumberFragment, bundle);
+            }
+        };
+
+        numbersListAdapter = new NumbersListAdapter(NumberService.getInstance().getData(), clickListener);
         layoutManager = new GridLayoutManager(getContext(), calculateNumberOfColumns(3));
 
         recyclerView = view.findViewById(R.id.numbers_list_view);
@@ -55,65 +73,12 @@ public class ListFragment extends Fragment {
         return view;
     }
 
-    protected int calculateNumberOfColumns(int base) {
+    private int calculateNumberOfColumns(int base) {
         int columns = base;
-        String screenSize = getScreenSizeCategory();
-
-        switch (screenSize) {
-            case "small":
-                if (base != 1) {
-                    columns = columns - 1;
-                }
-                break;
-            case "normal":
-                // Do nothing
-                break;
-            case "large":
-                columns += 2;
-                break;
-            case "xlarge":
-                columns += 3;
-                break;
-        }
-
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            columns = (int) (columns * 1.5);
+            columns += 1;
         }
 
         return columns;
-    }
-
-    protected String getScreenOrientation() {
-        String orientation = "undefined";
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            orientation = "landscape";
-        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            orientation = "portrait";
-        }
-
-        return orientation;
-    }
-
-    // Custom method to get screen size category
-    protected String getScreenSizeCategory() {
-        int screenLayout = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
-
-        switch (screenLayout) {
-            case Configuration.SCREENLAYOUT_SIZE_SMALL:
-                // small screens are at least 426dp x 320dp
-                return "small";
-            case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-                // normal screens are at least 470dp x 320dp
-                return "normal";
-            case Configuration.SCREENLAYOUT_SIZE_LARGE:
-                // large screens are at least 640dp x 480dp
-                return "large";
-            case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-                // xlarge screens are at least 960dp x 720dp
-                return "xlarge";
-            default:
-                return "undefined";
-        }
     }
 }
