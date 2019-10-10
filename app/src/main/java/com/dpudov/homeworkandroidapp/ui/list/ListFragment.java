@@ -3,6 +3,7 @@ package com.dpudov.homeworkandroidapp.ui.list;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +29,11 @@ import java.util.List;
 
 public class ListFragment extends Fragment {
 
-    private NumbersListAdapter numbersListAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView recyclerView;
-    private ImageView plusButton;
+    private NumbersListAdapter mNumbersListAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView mRecyclerView;
+    private ImageView mPlusButton;
+    private Parcelable mListState;
 
     public ListFragment() {
         // Required empty public constructor
@@ -59,33 +61,55 @@ public class ListFragment extends Fragment {
             }
         };
 
-        numbersListAdapter = new NumbersListAdapter(NumberService.getInstance().getData(), clickListener);
-        layoutManager = new GridLayoutManager(getContext(), calculateNumberOfColumns(3));
+        mRecyclerView = view.findViewById(R.id.numbers_list_view);
+        mPlusButton = view.findViewById(R.id.add_number);
 
-        recyclerView = view.findViewById(R.id.numbers_list_view);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(numbersListAdapter);
+        mLayoutManager = new GridLayoutManager(getContext(), calculateNumberOfColumns(3));
 
-        plusButton = view.findViewById(R.id.add_number);
-        plusButton.setOnClickListener(new View.OnClickListener() {
+        if (savedInstanceState != null) {
+            mListState = savedInstanceState.getParcelable(AppConstants.NUMBER_LIST_STATE);
+            mLayoutManager.onRestoreInstanceState(mListState);
+        }
+
+        mNumbersListAdapter = new NumbersListAdapter(NumberService.getInstance().getData(), clickListener);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mNumbersListAdapter);
+
+        mPlusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 List<NumberModel> list = NumberService.getInstance().getData();
                 NumberModel prev = list.get(list.size() - 1);
                 NumberService.getInstance().addNumber(prev.getNumber() + 1);
-                numbersListAdapter.notifyDataSetChanged();
+                mNumbersListAdapter.notifyDataSetChanged();
             }
         });
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mListState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelable(AppConstants.NUMBER_LIST_STATE, mListState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mListState = savedInstanceState.getParcelable(AppConstants.NUMBER_LIST_STATE);
+        }
+    }
+
+    @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (layoutManager != null) {
+        if (mLayoutManager != null) {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                ((GridLayoutManager) layoutManager).setSpanCount(4);
+                ((GridLayoutManager) mLayoutManager).setSpanCount(4);
             } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                ((GridLayoutManager) layoutManager).setSpanCount(3);
+                ((GridLayoutManager) mLayoutManager).setSpanCount(3);
             }
         }
     }
