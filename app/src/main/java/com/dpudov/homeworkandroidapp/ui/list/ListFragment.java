@@ -81,7 +81,7 @@ public class ListFragment extends Fragment {
                 List<NumberModel> list = NumberService.getInstance().getData();
                 NumberModel prev = list.get(list.size() - 1);
                 NumberService.getInstance().addNumber(prev.getNumber() + 1);
-                mNumbersListAdapter.notifyDataSetChanged();
+                mNumbersListAdapter.notifyItemInserted(list.size() - 1);
             }
         });
     }
