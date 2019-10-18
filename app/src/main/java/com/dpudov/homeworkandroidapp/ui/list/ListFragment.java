@@ -89,9 +89,10 @@ public class ListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        mListState = mLayoutManager.onSaveInstanceState();
-        outState.putParcelable(AppConstants.NUMBER_LIST_STATE, mListState);
+        if (mLayoutManager != null) {
+            mListState = mLayoutManager.onSaveInstanceState();
+            outState.putParcelable(AppConstants.NUMBER_LIST_STATE, mListState);
+        }
     }
 
     @Override
