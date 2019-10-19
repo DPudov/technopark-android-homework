@@ -28,6 +28,8 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (sInstance == null) {
                     sInstance = buildDatabase(context.getApplicationContext());
+                    List<NumberEntity> numbers = NumberGenerator.generateNumbers();
+                    populateData(numbers);
                     sInstance.updateDatabaseCreated(context.getApplicationContext());
                 }
             }
@@ -42,11 +44,11 @@ public abstract class AppDatabase extends RoomDatabase {
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
                         AppDatabase database = getInstance(appContext);
-                        List<NumberEntity> numbers = NumberGenerator.generateNumbers();
-                        populateData(numbers);
+
                         database.setDatabaseCreated();
                     }
                 })
+                .allowMainThreadQueries()
                 .build();
     }
 
