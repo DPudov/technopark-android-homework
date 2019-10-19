@@ -1,6 +1,5 @@
 package com.dpudov.homeworkandroidapp.ui.list;
 
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -74,7 +73,7 @@ public class ListFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.numbers_list_view);
         mPlusButton = view.findViewById(R.id.add_number);
 
-        mLayoutManager = new GridLayoutManager(getContext(), calculateNumberOfColumns(3));
+        mLayoutManager = new GridLayoutManager(getContext(), getContext().getResources().getInteger(R.integer.column_amount));
 
         if (savedInstanceState != null) {
             mListState = savedInstanceState.getParcelable(AppConstants.NUMBER_LIST_STATE);
@@ -111,26 +110,5 @@ public class ListFragment extends Fragment {
         if (savedInstanceState != null) {
             mListState = savedInstanceState.getParcelable(AppConstants.NUMBER_LIST_STATE);
         }
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (mLayoutManager != null) {
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                ((GridLayoutManager) mLayoutManager).setSpanCount(4);
-            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                ((GridLayoutManager) mLayoutManager).setSpanCount(3);
-            }
-        }
-    }
-
-    private int calculateNumberOfColumns(int base) {
-        int columns = base;
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            columns += 1;
-        }
-
-        return columns;
     }
 }
