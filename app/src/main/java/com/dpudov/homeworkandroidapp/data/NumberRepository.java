@@ -1,9 +1,12 @@
 package com.dpudov.homeworkandroidapp.data;
 
+import android.os.AsyncTask;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
 import com.dpudov.homeworkandroidapp.data.db.AppDatabase;
+import com.dpudov.homeworkandroidapp.data.db.NumberDao;
 import com.dpudov.homeworkandroidapp.data.db.NumberEntity;
 
 import java.util.List;
@@ -37,5 +40,23 @@ public class NumberRepository {
 
     public LiveData<List<NumberEntity>> getNumbers() {
         return mObservableNumbers;
+    }
+
+    public void insert(NumberEntity number) {
+        new InsertAsyncTask(mDatabase.numberDao()).execute(number);
+    }
+
+    private static class InsertAsyncTask extends AsyncTask<NumberEntity, Void, Void> {
+        private NumberDao mNumberDao;
+
+        private InsertAsyncTask(NumberDao numberDao) {
+            mNumberDao = numberDao;
+        }
+
+        @Override
+        protected Void doInBackground(NumberEntity... numberEntities) {
+            mNumberDao.insert(numberEntities[0]);
+            return null;
+        }
     }
 }

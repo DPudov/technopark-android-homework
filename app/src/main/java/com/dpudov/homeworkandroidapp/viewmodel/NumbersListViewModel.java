@@ -28,4 +28,8 @@ public class NumbersListViewModel extends AndroidViewModel {
     public LiveData<List<NumberEntity>> getNumbers() {
         return mObservableNumbers;
     }
+
+    public void insert(NumberEntity number) {
+        mRepository.insert(number);
+    }
 }

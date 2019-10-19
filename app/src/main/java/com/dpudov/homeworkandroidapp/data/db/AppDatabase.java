@@ -14,6 +14,7 @@ import com.dpudov.homeworkandroidapp.AppConstants;
 import com.dpudov.homeworkandroidapp.data.NumberGenerator;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
 @Database(entities = NumberEntity.class, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
@@ -28,8 +29,6 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (sInstance == null) {
                     sInstance = buildDatabase(context.getApplicationContext());
-                    List<NumberEntity> numbers = NumberGenerator.generateNumbers();
-                    populateData(numbers);
                     sInstance.updateDatabaseCreated(context.getApplicationContext());
                 }
             }
@@ -44,11 +43,13 @@ public abstract class AppDatabase extends RoomDatabase {
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
                         AppDatabase database = getInstance(appContext);
-
+                        Executors.newSingleThreadScheduledExecutor().execute(() -> {
+                            List<NumberEntity> numbers = NumberGenerator.generateNumbers();
+                            getInstance(appContext).populateData(numbers);
+                        });
                         database.setDatabaseCreated();
                     }
                 })
-                .allowMainThreadQueries()
                 .build();
     }
 
@@ -66,9 +67,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return mIsDatabaseCreated;
     }
 
-    private static void populateData(final List<NumberEntity> numbers) {
-        sInstance.runInTransaction(() -> {
-            sInstance.numberDao().insertAll(numbers);
-        });
+    private void populateData(final List<NumberEntity> numbers) {
+        sInstance.runInTransaction(() -> sInstance.numberDao().insertAll(numbers));
     }
 }

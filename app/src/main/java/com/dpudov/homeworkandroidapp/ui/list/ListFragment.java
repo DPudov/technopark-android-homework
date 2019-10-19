@@ -90,9 +90,8 @@ public class ListFragment extends Fragment {
             List<NumberEntity> list = mViewModel.getNumbers().getValue();
             if (list != null && !list.isEmpty()) {
                 NumberEntity prev = list.get(list.size() - 1);
-                mViewModel.getNumbers().getValue().add(new NumberEntity(prev.getValue() + 1));
-
-                mNumbersListAdapter.notifyItemInserted(list.size() - 1);
+                NumberEntity current = new NumberEntity(prev.getValue() + 1);
+                mViewModel.insert(current);
             }
         });
     }

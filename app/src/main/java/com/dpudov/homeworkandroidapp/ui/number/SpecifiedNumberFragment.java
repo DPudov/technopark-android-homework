@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.dpudov.homeworkandroidapp.AppConstants;
 import com.dpudov.homeworkandroidapp.R;
-import com.dpudov.homeworkandroidapp.data.NumberModel;
+import com.dpudov.homeworkandroidapp.data.db.NumberEntity;
 
 
 public class SpecifiedNumberFragment extends Fragment {
@@ -37,7 +37,7 @@ public class SpecifiedNumberFragment extends Fragment {
         if (args != null) {
             int number = args.getInt(AppConstants.SPECIFIED_NUMBER);
             int color = args.getInt(AppConstants.SPECIFIED_NUMBER_COLOR);
-            NumberModel numberModel = new NumberModel(number);
+            NumberEntity numberModel = new NumberEntity(number);
             mNumberTextView.setText(numberModel.toString());
             mNumberTextView.setTextColor(color);
         }

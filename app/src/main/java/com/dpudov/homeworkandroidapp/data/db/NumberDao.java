@@ -15,4 +15,7 @@ public interface NumberDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(List<NumberEntity> numbers);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(NumberEntity number);
 }
