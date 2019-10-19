@@ -8,18 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dpudov.homeworkandroidapp.R;
-import com.dpudov.homeworkandroidapp.data.NumberModel;
+import com.dpudov.homeworkandroidapp.data.db.NumberEntity;
 
 import java.util.List;
 
 public class NumbersListAdapter extends RecyclerView.Adapter<NumbersViewHolder> {
-    private List<NumberModel> mNumbers;
-    private OnItemClickListener<NumberModel> mClickListener;
+    private List<NumberEntity> mNumbers;
+    private OnItemClickListener<NumberEntity> mClickListener;
 
-    public NumbersListAdapter(@NonNull List<NumberModel> numbers, OnItemClickListener<NumberModel> clickListener) {
+    public NumbersListAdapter(@NonNull List<NumberEntity> numbers, OnItemClickListener<NumberEntity> clickListener) {
         this.mNumbers = numbers;
         this.mClickListener = clickListener;
     }
+
 
     @NonNull
     @Override
@@ -32,7 +33,7 @@ public class NumbersListAdapter extends RecyclerView.Adapter<NumbersViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull NumbersViewHolder holder, int position) {
-        NumberModel current = mNumbers.get(position);
+        NumberEntity current = mNumbers.get(position);
         if (current != null) {
             holder.getNumberTextView().setText(current.toString());
             holder.bind(current, mClickListener);
@@ -41,6 +42,11 @@ public class NumbersListAdapter extends RecyclerView.Adapter<NumbersViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mNumbers.size();
+        return mNumbers == null ? 0 : mNumbers.size();
+    }
+
+    public void setNumbers(List<NumberEntity> mNumbers) {
+        this.mNumbers = mNumbers;
+        notifyDataSetChanged();
     }
 }

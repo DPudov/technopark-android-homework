@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -19,10 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dpudov.homeworkandroidapp.AppConstants;
 import com.dpudov.homeworkandroidapp.R;
-import com.dpudov.homeworkandroidapp.data.NumberModel;
-import com.dpudov.homeworkandroidapp.data.NumberService;
+import com.dpudov.homeworkandroidapp.data.db.NumberEntity;
 import com.dpudov.homeworkandroidapp.ui.list.adapter.NumbersListAdapter;
 import com.dpudov.homeworkandroidapp.ui.list.adapter.OnItemClickListener;
+import com.dpudov.homeworkandroidapp.viewmodel.NumbersListViewModel;
 
 import java.util.List;
 
@@ -34,9 +35,21 @@ public class ListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ImageView mPlusButton;
     private Parcelable mListState;
+    private NumbersListViewModel mViewModel;
 
     public ListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(NumbersListViewModel.class);
+        mViewModel.getNumbers().observe(this, numberEntities -> {
+            if (numberEntities != null) {
+                mNumbersListAdapter.setNumbers(numberEntities);
+            }
+        });
     }
 
     @Override
@@ -48,17 +61,14 @@ public class ListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        OnItemClickListener<NumberModel> clickListener = new OnItemClickListener<NumberModel>() {
-            @Override
-            public void onItemClick(NumberModel item) {
-                int number = item.getNumber();
-                NavController controller = Navigation.findNavController(view);
-                Bundle bundle = new Bundle();
-                bundle.putInt(AppConstants.SPECIFIED_NUMBER, number);
-                int color = item.isOdd() ? Color.BLUE : Color.RED;
-                bundle.putInt(AppConstants.SPECIFIED_NUMBER_COLOR, color);
-                controller.navigate(R.id.action_listFragment_to_specifiedNumberFragment, bundle);
-            }
+        OnItemClickListener<NumberEntity> clickListener = item -> {
+            int number = item.getValue();
+            NavController controller = Navigation.findNavController(view);
+            Bundle bundle = new Bundle();
+            bundle.putInt(AppConstants.SPECIFIED_NUMBER, number);
+            int color = item.isOdd() ? Color.BLUE : Color.RED;
+            bundle.putInt(AppConstants.SPECIFIED_NUMBER_COLOR, color);
+            controller.navigate(R.id.action_listFragment_to_specifiedNumberFragment, bundle);
         };
 
         mRecyclerView = view.findViewById(R.id.numbers_list_view);
@@ -71,16 +81,16 @@ public class ListFragment extends Fragment {
             mLayoutManager.onRestoreInstanceState(mListState);
         }
 
-        mNumbersListAdapter = new NumbersListAdapter(NumberService.getInstance().getData(), clickListener);
+        mNumbersListAdapter = new NumbersListAdapter(mViewModel.getNumbers().getValue(), clickListener);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mNumbersListAdapter);
 
-        mPlusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<NumberModel> list = NumberService.getInstance().getData();
-                NumberModel prev = list.get(list.size() - 1);
-                NumberService.getInstance().addNumber(prev.getNumber() + 1);
+        mPlusButton.setOnClickListener(view1 -> {
+
+            List<NumberEntity> list = mViewModel.getNumbers().getValue();
+            if (list != null) {
+                NumberEntity prev = list.get(list.size() - 1);
+                mViewModel.getNumbers().getValue().add(new NumberEntity(prev.getValue() + 1));
                 mNumbersListAdapter.notifyItemInserted(list.size() - 1);
             }
         });

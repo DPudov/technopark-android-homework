@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dpudov.homeworkandroidapp.R;
-import com.dpudov.homeworkandroidapp.data.NumberModel;
+import com.dpudov.homeworkandroidapp.data.db.NumberEntity;
 
 public class NumbersViewHolder extends RecyclerView.ViewHolder {
     private TextView numberTextView;
@@ -29,14 +29,9 @@ public class NumbersViewHolder extends RecyclerView.ViewHolder {
         return root;
     }
 
-    public void bind(@NonNull final NumberModel numberModel, @NonNull final OnItemClickListener<NumberModel> clickListener) {
+    public void bind(@NonNull final NumberEntity numberModel, @NonNull final OnItemClickListener<NumberEntity> clickListener) {
         getNumberTextView().setText(numberModel.toString());
-        getRoot().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickListener.onItemClick(numberModel);
-            }
-        });
+        getRoot().setOnClickListener(view -> clickListener.onItemClick(numberModel));
         if (numberModel.isOdd()) {
             getNumberTextView().setTextColor(Color.BLUE);
         } else {
